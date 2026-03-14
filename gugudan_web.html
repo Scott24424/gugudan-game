@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 즐거운 구구단 놀이 🌟</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+        body {
+            font-family: 'Jua', sans-serif;
+            background: linear-gradient(135deg, #FFF0F5, #E0FFFF);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            text-align: center;
+        }
+
+        #app-container {
+            background-color: white;
+            border-radius: 30px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+            width: 90%;
+            border: 5px solid #FFDAB9;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            color: #FF69B4;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #4169E1;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.5em;
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-small {
+            font-size: 1.2em;
+            padding: 10px 15px;
+            margin: 5px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            filter: grayscale(1);
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+        .btn-pink { background-color: #FFB6C1; color: #C71585; }
+        .btn-blue { background-color: #87CEFA; color: #104E8B; }
+        .btn-green { background-color: #98FB98; color: #006400; }
+        .btn-yellow { background-color: #FFFACD; color: #B8860B; }
+        .btn-orange { background-color: #FFDAB9; color: #D2691E; }
+        .btn-red { background-color: #FFB6C1; color: #8B0000; border: 2px solid #FF69B4; }
+        
+        .btn-back {
+            background-color: #E6E6FA;
+            color: #4B0082;
+            font-size: 1.2em;
+            padding: 10px 20px;
+        }
+
+        .btn-toggle {
+            background-color: #FFFACD;
+            color: #B8860B;
+        }
+
+        .btn-toggle.selected {
+            background-color: #FFB6C1;
+            color: #C71585;
+            box-shadow: 0 0 10px #FF69B4, inset 0 0 10px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        .dan-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .practice-board {
+            font-size: 1.8em;
+            line-height: 1.6;
+            background-color: #F0FFF0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 3px dashed #32CD32;
+        }
+
+        .quiz-question {
+            font-size: 3.5em;
+            color: #FF4500;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+
+        /* 8지 선다 버튼 영역 */
+        .quiz-options-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-option {
+            font-family: 'Jua', sans-serif;
+            font-size: 2em;
+            padding: 15px 5px;
+            border-radius: 15px;
+            background-color: #F0F8FF;
+            border: 3px solid #87CEFA;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            color: #333;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-option:hover:not(:disabled) {
+            background-color: #E0FFFF;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-option:active:not(:disabled) {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-option:disabled {
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        .btn-option.correct {
+            background-color: #98FB98 !important;
+            border-color: #32CD32 !important;
+            color: #006400 !important;
+            box-shadow: 0 0 15px rgba(50, 205, 50, 0.5);
+            animation: correctPop 0.4s;
+        }
+
+        .btn-option.wrong {
+            background-color: #FFB6C1 !important;
+            border-color: #FF1493 !important;
+            color: #C71585 !important;
+            animation: shake 0.4s;
+        }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        .feedback-message {
+            font-size: 1.8em;
+            min-height: 50px;
+            margin-bottom: 10px;
+            color: #FF1493;
+        }
+
+        .wrong-list {
+            text-align: left;
+            background-color: #FFF5EE;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 1.5em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .wrong-item {
+            margin-bottom: 10px;
+            border-bottom: 2px solid #FFDAB9;
+            padding-bottom: 5px;
+        }
+
+        .confetti-bg {
+            background-image: radial-gradient(circle, #FFD700 10%, transparent 10%), radial-gradient(circle, #FF69B4 10%, transparent 10%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            animation: moveBg 5s linear infinite;
+        }
+
+        @keyframes moveBg {
+            0% { background-position: 0 0, 15px 15px; }
+            100% { background-position: 100px 100px, 115px 115px; }
+        }
+        
+        /* 레벨 업 오버레이 애니메이션 */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app-container">
+        <!-- 상단 레벨 & 경험치 영역 (항상 표시) -->
+        <div id="level-container" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; background: #FFF5EE; padding: 10px 20px; border-radius: 20px; border: 3px solid #FFDAB9; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <div style="font-size: 2.5em; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" id="char-display">🥚</div>
+            <div style="flex-grow: 1; margin: 0 15px;">
+                <div style="font-size: 1.2em; color: #FF4500; font-weight: bold; text-align: left; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(255,69,0,0.2);">
+                    Lv.<span id="level-display">1</span> [<span id="char-name-display">알</span>]
+                </div>
+                <div style="background: #e0e0e0; border-radius: 10px; height: 18px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
+                    <div id="exp-bar" style="background: linear-gradient(90deg, #32CD32, #7CFC00); width: 0%; height: 100%; transition: width 0.5s ease-out; box-shadow: 0 0 10px rgba(50,205,50,0.5);"></div>
+                </div>
+            </div>
+            <div style="font-size: 1.1em; color: #104E8B; font-weight: bold; background: #E0FFFF; padding: 5px 10px; border-radius: 10px; border: 2px solid #87CEFA; white-space: nowrap;">
+                <span id="exp-display">0</span> / <span id="max-exp-display">50</span>
+            </div>
+        </div>
+
+        <!-- 메인 화면 -->
+        <div id="main-screen" class="screen active">
+            <h1>🌟 즐거운 구구단 놀이 🌟</h1>
+            <p>안녕! 재미있는 구구단 게임을 시작해 볼까? 🚀</p>
+            <button class="btn btn-pink" onclick="showScreen('practice-select-screen')">📖 순서대로 연습하기</button><br>
+            <button class="btn btn-green" onclick="showScreen('select-quiz-screen')">🎯 선택 퀴즈 대결</button><br>
+            <button class="btn btn-blue" onclick="goToQuestionCount('all')">🎲 전체 랜덤 퀴즈</button>
+            <p style="font-size: 1.1em; color: #666; margin-top: 20px;">* 전체 랜덤은 연습하거나 클리어한 단에서만 나와요!</p>
+            
+            <div style="margin-top: 30px;">
+                <button class="btn btn-red btn-small" onclick="resetLevel()">⚠️ 데이터 초기화 (1레벨로 돌아가기)</button>
+            </div>
+        </div>
+
+        <!-- 순서대로 연습 - 단 선택 화면 -->
+        <div id="practice-select-screen" class="screen">
+            <h2>📖 몇 단을 연습할까? 🤔</h2>
+            <div class="dan-grid" id="dan-buttons">
+                <!-- JS로 버튼 생성 -->
+            </div>
+            <button class="btn btn-back" onclick="showScreen('main-screen')">🏠 처음으로</button>
+        </div>
+
+        <!-- 🎯 선택 퀴즈 대결 - 단 선택 화면 -->
+        <div id="select-quiz-screen" class="screen">
+            <h2>🎯 문제에 나올 단을 고르자! (여러 개 가능) 🤔</h2>
+            <div class="dan-grid" id="select-dan-buttons">
+                <!-- JS로 버튼 생성 -->
+            </div>
+            <button class="btn btn-blue" onclick="goToQuestionCount('selective')">진짜 시작! 🚀</button>
+            <br><br>
+            <button class="btn btn-back" onclick="showScreen('main-screen')">🏠 처음으로</button>
+        </div>
+
+        <!-- 문제 개수 선택 화면 -->
+        <div id="question-count-screen" class="screen">
+            <h2>🔢 몇 문제를 풀어볼까? 🤓</h2>
+            <p>문제가 많을수록 보너스 경험치가 엄~청 늘어나!</p>
+            <div class="dan-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <button class="btn btn-yellow" onclick="startQuizWithCount(10)">10 문제</button>
+                <button class="btn btn-yellow" onclick="startQuizWithCount(20)">20 문제</button>
+                <button class="btn btn-yellow" onclick="startQuizWithCount(30)">30 문제</button>
+                <button class="btn btn-yellow" style="grid-column: span 3; max-width: 50%; justify-self: center;" onclick="startQuizWithCount(40)">40 문제</button>
+                <button class="btn btn-yellow" style="grid-column: span 3; max-width: 50%; justify-self: center;" onclick="startQuizWithCount(50)">50 문제</button>
+            </div>
+            <br>
+            <button class="btn btn-back" onclick="showScreen('main-screen')">🏠 처음으로</button>
+        </div>
+
+        <!-- 순서대로 연습 - 보여주는 화면 -->
+        <div id="practice-screen" class="screen">
+            <h2 id="practice-title">2단 연습하기 ✨</h2>
+            <div id="practice-content" class="practice-board">
+                <!-- 구구단 내용이 들어갈 곳 -->
+            </div>
+            <button class="btn btn-green" onclick="completePractice()">✅ 다 외웠어요!</button><br>
+            <button class="btn btn-back" onclick="showScreen('practice-select-screen')">🔙 다른 단 고르기</button>
+        </div>
+
+        <!-- 퀴즈 화면 -->
+        <div id="quiz-screen" class="screen">
+            <h2 id="quiz-progress">🎲 문제 1 / 10</h2>
+            <div class="quiz-question" id="quiz-q">2 x 3 = ?</div>
+            
+            <!-- 8지 선택 버튼 영역 -->
+            <div class="quiz-options-grid" id="quiz-options">
+                <!-- JS에서 버튼 생성 -->
+            </div>
+
+            <div id="quiz-feedback" class="feedback-message"></div>
+            
+            <button id="next-quiz-btn" class="btn btn-blue" style="display:none;" onclick="nextQuestion(true)">다음 문제 👉</button>
+            <br><br>
+            <!-- 퀴즈 중단 버튼 -->
+            <button class="btn btn-back btn-small" onclick="cancelQuiz()">❌ 그만하기 (처음으로)</button>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-screen" class="screen">
+            <h1>🏆 퀴즈 끝! 🏆</h1>
+            <h2>너의 점수는: <span id="final-score" style="color:#FF4500; font-size:1.5em;">100</span>점!</h2>
+            <p id="result-message">🎉 참 잘했어! 최고야! 🎉</p>
+
+            <div id="wrong-answers-container" style="display:none;">
+                <h3>앗! 헷갈렸던 문제들이야 🤔</h3>
+                <div id="wrong-list" class="wrong-list">
+                    <!-- 틀린 문제 목록 -->
+                </div>
+                <button class="btn btn-pink" onclick="startRetry()">💪 틀린 문제 다시 도전!</button>
+            </div>
+
+            <br><br>
+            <button class="btn btn-back" onclick="showScreen('main-screen')">🏠 처음으로</button>
+        </div>
+    </div>
+
+    <!-- 레벨업 오버레이 -->
+    <div id="level-up-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
+        <h1 style="font-size: 5em; color: #FFD700; text-shadow: 0 0 20px #FF8C00; margin: 0; animation: bounce 1s infinite;">LEVEL UP!</h1>
+        <div style="font-size: 8em; animation: correctPop 0.5s;" id="level-up-char">🐥</div>
+        <p style="font-size: 2em; color: #FF4500; font-weight: bold; margin-top: 20px;"><span id="level-up-msg">삐약이</span>(으)로 진화했다!</p>
+    </div>
+
+    <script>
+        // --- 게임 캐릭터 생성 (1~99 레벨) ---
+        const baseChars = [
+            {n:'씨앗', e:'🌱'}, {n:'새싹', e:'🌿'}, {n:'네잎클로버', e:'🍀'}, {n:'병아리', e:'🐣'},
+            {n:'삐약이', e:'🐥'}, {n:'쥐', e:'🐭'}, {n:'햄스터', e:'🐹'}, {n:'토끼', e:'🐰'},
+            {n:'고양이', e:'🐱'}, {n:'강아지', e:'🐶'}, {n:'여우', e:'🦊'}, {n:'곰', e:'🐻'},
+            {n:'판다', e:'🐼'}, {n:'코알라', e:'🐨'}, {n:'호랑이', e:'🐯'}, {n:'사자', e:'🦁'},
+            {n:'소', e:'🐮'}, {n:'돼지', e:'🐷'}, {n:'개구리', e:'🐸'}, {n:'원숭이', e:'🐵'},
+            {n:'닭', e:'🐔'}, {n:'펭귄', e:'🐧'}, {n:'새', e:'🐦'}, {n:'독수리', e:'🦅'},
+            {n:'부엉이', e:'🦉'}, {n:'박쥐', e:'🦇'}, {n:'늑대', e:'🐺'}, {n:'멧돼지', e:'🐗'},
+            {n:'말', e:'🐴'}, {n:'유니콘', e:'🦄'}, {n:'꿀벌', e:'🐝'}, {n:'애벌레', e:'🐛'},
+            {n:'나비', e:'🦋'}, {n:'무당벌레', e:'🐞'}, {n:'개미', e:'🐜'}, {n:'거북이', e:'🐢'},
+            {n:'뱀', e:'🐍'}, {n:'도마뱀', e:'🦎'}, {n:'티라노', e:'🦖'}, {n:'브라키오', e:'🦕'},
+            {n:'문어', e:'🐙'}, {n:'오징어', e:'🦑'}, {n:'새우', e:'🦐'}, {n:'가재', e:'🦞'},
+            {n:'게', e:'🦀'}, {n:'복어', e:'🐡'}, {n:'열대어', e:'🐠'}, {n:'물고기', e:'🐟'},
+            {n:'돌고래', e:'🐬'}, {n:'고래', e:'🐳'}, {n:'상어', e:'🦈'}, {n:'악어', e:'🐊'},
+            {n:'표범', e:'🐆'}, {n:'얼룩말', e:'🦓'}, {n:'고릴라', e:'🦍'}, {n:'코끼리', e:'🐘'},
+            {n:'하마', e:'🦛'}, {n:'코뿔소', e:'🦏'}, {n:'낙타', e:'🐪'}, {n:'기린', e:'🦒'},
+            {n:'캥거루', e:'🦘'}, {n:'물소', e:'🐃'}, {n:'사슴', e:'🦌'}, {n:'수탉', e:'🐓'},
+            {n:'칠면조', e:'🦃'}, {n:'공작새', e:'🦚'}, {n:'앵무새', e:'🦜'}, {n:'백조', e:'🦢'},
+            {n:'홍학', e:'🦩'}, {n:'비둘기', e:'🕊'}, {n:'너구리', e:'🦝'}, {n:'스컹크', e:'🦨'},
+            {n:'수달', e:'🦦'}, {n:'나무늘보', e:'🦥'}, {n:'청룡', e:'🐉'}, {n:'드래곤', e:'🐲'},
+            {n:'외계인', e:'👽'}, {n:'로봇', e:'🤖'}, {n:'유령', e:'👻'}, {n:'해골', e:'💀'},
+            {n:'도깨비', e:'👹'}, {n:'텐구', e:'👺'}, {n:'빛나는 별', e:'🌟'}, {n:'우주', e:'🌌'}
+        ];
+        const prefixes = ['초보', '마을의', '모험가', '숲속의', '바다의', '사막의', '용감한', '수수께끼', '전설의', '빛나는', '환상의', '신화속', '우주 최강'];
+        
+        const characters = [];
+        for (let i = 1; i <= 99; i++) {
+            if (i === 1) {
+                characters.push({ name: '알', char: '🥚' });
+            } else if (i === 99) {
+                characters.push({ name: '구구단 신', char: '👑' });
+            } else {
+                let base = baseChars[(i - 2) % baseChars.length];
+                let prefixIndex = Math.floor(((i - 2) / 97) * prefixes.length);
+                if (prefixIndex >= prefixes.length) prefixIndex = prefixes.length - 1;
+                characters.push({ name: `${prefixes[prefixIndex]} ${base.n}`, char: base.e });
+            }
+        }
+
+        // --- 상태 변수 ---
+        let currentQuiz = 1;
+        let totalQuizzes = 10;
+        let score = 0;
+        let currentDan = 2;
+        let currentNum = 1;
+        let questionType = 0; // 0: A x B = ?, 1: A x ? = C
+        let wrongQuestions = [];
+        let isRetryMode = false;
+        let retryIndex = 0;
+
+        let quizMode = 'all'; // 'all' or 'selective'
+        let selectedDans = [];
+
+        // 타이머 관련 변수
+        let nextQuestionTimeout = null;
+        let countdownInterval = null;
+
+        // 데이터 상태
+        let level = 1;
+        let exp = 0;
+        let baseMaxExp = 50;
+        let clearedDans = new Set([2]);
+        let currentPracticeDan = 2;
+
+        // --- 초기화 ---
+        window.onload = () => {
+            loadData();
+            const grid = document.getElementById('dan-buttons');
+            const selectGrid = document.getElementById('select-dan-buttons');
+
+            for (let i = 2; i <= 9; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-yellow';
+                btn.innerText = i + '단';
+                btn.onclick = () => showPracticeDan(i);
+                grid.appendChild(btn);
+
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'btn btn-toggle';
+                toggleBtn.innerText = i + '단';
+                toggleBtn.onclick = () => toggleDanSelection(i, toggleBtn);
+                selectGrid.appendChild(toggleBtn);
+            }
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('app-container').classList.remove('confetti-bg');
+            
+            // 화면 이동시 남은 타이머 취소
+            clearTimeout(nextQuestionTimeout);
+            clearInterval(countdownInterval);
+        }
+
+        // --- 데이터 관리 (로컬 스토리지) ---
+        function loadData() {
+            const savedLv = localStorage.getItem('gugudan_lv');
+            const savedExp = localStorage.getItem('gugudan_exp');
+            const savedDans = localStorage.getItem('gugudan_dans');
+            if (savedLv) level = parseInt(savedLv);
+            if (savedExp) exp = parseInt(savedExp);
+            if (savedDans) {
+                try { clearedDans = new Set(JSON.parse(savedDans)); } catch(e){}
+            }
+            if (clearedDans.size === 0) clearedDans.add(2);
+            updateLevelUI();
+        }
+
+        function saveData() {
+            localStorage.setItem('gugudan_lv', level);
+            localStorage.setItem('gugudan_exp', exp);
+            localStorage.setItem('gugudan_dans', JSON.stringify(Array.from(clearedDans)));
+        }
+
+        function resetLevel() {
+            if(confirm('정말로 기록과 레벨을 전부 초기화할까요? (초기화 후 1레벨로 돌아갑니다 😢)')) {
+                localStorage.removeItem('gugudan_lv');
+                localStorage.removeItem('gugudan_exp');
+                localStorage.removeItem('gugudan_dans');
+                level = 1;
+                exp = 0;
+                clearedDans = new Set([2]);
+                saveData();
+                updateLevelUI();
+                alert('데이터가 성공적으로 초기화되었습니다! 다시 새롭게 출발해봐요! 🚀');
+            }
+        }
+
+        function getMaxExp(lv) {
+            return baseMaxExp; // 모든 레벨에서 50 고정
+        }
+
+        function addExp(amount) {
+            if (level >= characters.length && exp >= getMaxExp(level)) return; // Max level
+
+            exp += amount;
+            let maxExp = getMaxExp(level);
+            let leveledUp = false;
+
+            while (exp >= maxExp && level < characters.length) {
+                exp -= maxExp;
+                level++;
+                maxExp = getMaxExp(level);
+                leveledUp = true;
+            }
+
+            if (level >= characters.length) {
+                level = characters.length;
+                exp = maxExp; 
+            }
+
+            saveData();
+            updateLevelUI();
+
+            if (leveledUp) {
+                showLevelUpAnimation();
+            }
+        }
+
+        function updateLevelUI() {
+            const charInfo = characters[Math.min(level - 1, characters.length - 1)];
+            document.getElementById('level-display').innerText = level;
+            document.getElementById('char-name-display').innerText = charInfo.name;
+            document.getElementById('char-display').innerText = charInfo.char;
+
+            const max = getMaxExp(level);
+            if (level >= characters.length && exp >= max) {
+                document.getElementById('exp-display').innerText = 'MAX';
+                document.getElementById('max-exp-display').innerText = 'MAX';
+                document.getElementById('exp-bar').style.width = '100%';
+            } else {
+                document.getElementById('exp-display').innerText = exp;
+                document.getElementById('max-exp-display').innerText = max;
+                document.getElementById('exp-bar').style.width = (exp / max * 100) + '%';
+            }
+        }
+
+        function showLevelUpAnimation() {
+            const overlay = document.getElementById('level-up-overlay');
+            const charInfo = characters[Math.min(level - 1, characters.length - 1)];
+            document.getElementById('level-up-char').innerText = charInfo.char;
+            document.getElementById('level-up-msg').innerText = charInfo.name;
+            
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 3000); // 3초 뒤 닫힘
+        }
+
+        // --- 차례대로 연습 기능 ---
+        function showPracticeDan(dan) {
+            currentPracticeDan = dan;
+            document.getElementById('practice-title').innerText = `✨ ${dan}단 연습하기 ✨`;
+            let content = '';
+            for (let i = 1; i <= 9; i++) {
+                content += `${dan} x ${i} = <strong>${dan * i}</strong><br>`;
+            }
+            document.getElementById('practice-content').innerHTML = content;
+            showScreen('practice-screen');
+        }
+
+        function completePractice() {
+            clearedDans.add(currentPracticeDan);
+            saveData();
+            addExp(5); 
+            alert(`${currentPracticeDan}단을 완벽하게 외웠구나! 이제 전체 퀴즈에 ${currentPracticeDan}단이 추가될 거야! 🎉`);
+            showScreen('practice-select-screen');
+        }
+
+        // --- 선택 퀴즈 기능 ---
+        function toggleDanSelection(dan, btn) {
+            const index = selectedDans.indexOf(dan);
+            if (index > -1) {
+                selectedDans.splice(index, 1);
+                btn.classList.remove('selected');
+            } else {
+                selectedDans.push(dan);
+                btn.classList.add('selected');
+            }
+        }
+
+        function goToQuestionCount(mode) {
+            if (mode === 'selective' && selectedDans.length === 0) {
+                alert("최소한 한 개의 단을 골라 줘! 😉");
+                return;
+            }
+            quizMode = mode;
+            showScreen('question-count-screen');
+        }
+
+        function startQuizWithCount(count) {
+            totalQuizzes = count;
+            initQuiz();
+            showScreen('quiz-screen');
+        }
+
+        function initQuiz() {
+            currentQuiz = 1;
+            score = 0;
+            wrongQuestions = [];
+            isRetryMode = false;
+            prepareQuestion();
+        }
+
+        function prepareQuestion() {
+            clearInterval(countdownInterval);
+            clearTimeout(nextQuestionTimeout);
+
+            if (isRetryMode) {
+                document.getElementById('quiz-progress').innerText = `💪 오답 노트 다시도전! (${retryIndex + 1}/${wrongQuestions.length})`;
+                currentDan = wrongQuestions[retryIndex].dan;
+                currentNum = wrongQuestions[retryIndex].num;
+                questionType = wrongQuestions[retryIndex].type || 0;
+            } else {
+                document.getElementById('quiz-progress').innerText = `🎲 문제 ${currentQuiz} / ${totalQuizzes}`;
+
+                if (quizMode === 'all') {
+                    let unlocked = Array.from(clearedDans);
+                    if (unlocked.length === 0) unlocked = [2];
+                    currentDan = unlocked[Math.floor(Math.random() * unlocked.length)];
+                } else {
+                    currentDan = selectedDans[Math.floor(Math.random() * selectedDans.length)];
+                }
+                currentNum = Math.floor(Math.random() * 9) + 1; // 1~9
+                questionType = Math.random() < 0.5 ? 0 : 1;
+            }
+
+            let correctAns;
+            let optionsPool = [];
+            const qPlaceholder = `<span style="display:inline-block; width:50px; border-bottom:5px solid #FF4500; text-align:center; padding-bottom:5px;">?</span>`;
+
+            if (questionType === 0) {
+                // A x B = ?
+                document.getElementById('quiz-q').innerHTML = `${currentDan} x ${currentNum} = ${qPlaceholder}`;
+                correctAns = currentDan * currentNum;
+                for(let i=1; i<=9; i++) optionsPool.push(currentDan * i);
+            } else {
+                // A x ? = C
+                document.getElementById('quiz-q').innerHTML = `${currentDan} x ${qPlaceholder} = ${currentDan * currentNum}`;
+                correctAns = currentNum;
+                for(let i=1; i<=9; i++) optionsPool.push(i);
+            }
+
+            optionsPool = optionsPool.filter(x => x !== correctAns);
+            optionsPool.sort(() => Math.random() - 0.5); 
+            let options = optionsPool.slice(0, 7); 
+            
+            options.push(correctAns);
+            options.sort(() => Math.random() - 0.5);
+
+            const optionsGrid = document.getElementById('quiz-options');
+            optionsGrid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswerChoice(opt, correctAns, btn);
+                optionsGrid.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').innerText = '';
+            document.getElementById('next-quiz-btn').style.display = 'none';
+        }
+
+        function checkAnswerChoice(selectedOpt, correctAns, clickedBtn) {
+            // 모든 버튼 비활성화
+            const btns = document.querySelectorAll('.btn-option');
+            btns.forEach(b => b.disabled = true);
+
+            if (selectedOpt === correctAns) {
+                clickedBtn.classList.add('correct');
+                const praises = ["와! 정답이야! 🎉", "최고야! 👍", "퍼펙트! 💯", "천재 아니야? 😲", "멋져! 😎"];
+                document.getElementById('quiz-feedback').innerHTML = `<span style="color:#32CD32;">${praises[Math.floor(Math.random() * praises.length)]}</span>`;
+                
+                if (!isRetryMode) {
+                    score += 10;
+                    addExp(10); 
+                } else {
+                    addExp(5); 
+                }
+            } else {
+                clickedBtn.classList.add('wrong');
+                // 정답 버튼 초록색으로 표시
+                btns.forEach(b => {
+                    if(parseInt(b.innerText, 10) === correctAns) {
+                        b.classList.add('correct'); 
+                    }
+                });
+                
+                document.getElementById('quiz-feedback').innerHTML = `앗! 아쉽지만 정답은 <strong>${correctAns}</strong>야! 💪`;
+                if (!isRetryMode) {
+                    wrongQuestions.push({ dan: currentDan, num: currentNum, type: questionType, ans: correctAns });
+                }
+            }
+
+            // 3초 카운트다운 시작
+            const nextBtn = document.getElementById('next-quiz-btn');
+            nextBtn.style.display = 'inline-block';
+            let timeLeft = 3;
+            nextBtn.innerText = `다음 문제 👉 (${timeLeft}초)`;
+
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                if(timeLeft > 0) {
+                    nextBtn.innerText = `다음 문제 👉 (${timeLeft}초)`;
+                }
+            }, 1000);
+
+            nextQuestionTimeout = setTimeout(() => {
+                nextQuestion(false);
+            }, 3000);
+        }
+
+        function nextQuestion(manualClick) {
+            if (manualClick) {
+                clearInterval(countdownInterval);
+                clearTimeout(nextQuestionTimeout);
+            }
+
+            if (isRetryMode) {
+                retryIndex++;
+                if (retryIndex < wrongQuestions.length) {
+                    prepareQuestion();
+                } else {
+                    finishRetry();
+                }
+            } else {
+                currentQuiz++;
+                if (currentQuiz <= totalQuizzes) {
+                    prepareQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }
+        }
+
+        function cancelQuiz() {
+            clearInterval(countdownInterval);
+            clearTimeout(nextQuestionTimeout);
+            showScreen('main-screen');
+        }
+
+        function finishQuiz() {
+            showScreen('result-screen');
+            // 점수 표시 (문제당 10점으로 계산하므로 최고점 = 10 * 문제수)
+            document.getElementById('final-score').innerHTML = `${score} <span style="font-size: 0.6em; color: gray;">/ ${totalQuizzes * 10}</span>`;
+
+            const msgEl = document.getElementById('result-message');
+            const wrongContainer = document.getElementById('wrong-answers-container');
+
+            if (score === totalQuizzes * 10) {
+                document.getElementById('app-container').classList.add('confetti-bg');
+                msgEl.innerText = "와우! 만점! 정말 대단해! 🌟🌟🌟";
+                wrongContainer.style.display = 'none';
+                
+                // 만점 완료 시, 문제 갯수에 따라 폭발적인 추가 엑스피
+                const bonusMap = { 10: 50, 20: 150, 30: 300, 40: 500, 50: 800 };
+                const perfectBonus = bonusMap[totalQuizzes] || 50;
+                addExp(perfectBonus);
+            } else {
+                msgEl.innerText = "수고했어! 👏👏 오답 노트로 틀린 걸 다시 풀어보자!";
+                wrongContainer.style.display = 'block';
+                // 80% 이상 맞았을 때 소소한 보너스 경험치 
+                if (score >= (totalQuizzes * 10 * 0.8)) addExp(totalQuizzes * 2); 
+
+                let wList = '';
+                wrongQuestions.forEach(q => {
+                    if(q.type === 0) {
+                        wList += `<div class="wrong-item">📝 ${q.dan} x ${q.num} = <strong>${q.ans}</strong></div>`;
+                    } else {
+                        wList += `<div class="wrong-item">📝 ${q.dan} x <strong>${q.ans}</strong> = ${q.dan * q.num}</div>`;
+                    }
+                });
+                document.getElementById('wrong-list').innerHTML = wList;
+            }
+
+            if (score >= (totalQuizzes * 10 * 0.8) && quizMode === 'selective') {
+                selectedDans.forEach(d => clearedDans.add(d));
+            }
+            saveData();
+        }
+
+        function startRetry() {
+            isRetryMode = true;
+            retryIndex = 0;
+            showScreen('quiz-screen');
+            prepareQuestion();
+        }
+
+        function finishRetry() {
+            showScreen('result-screen');
+            document.getElementById('app-container').classList.add('confetti-bg');
+            document.getElementById('result-message').innerText = "🎉 오답 노트까지 완벽하게 끝냈어! 최고야! 👍👍👍";
+            document.getElementById('wrong-answers-container').style.display = 'none';
+            addExp(wrongQuestions.length * 5); // 오답노트 완료 보너스 
+        }
+
+    </script>
+</body>
+</html>
